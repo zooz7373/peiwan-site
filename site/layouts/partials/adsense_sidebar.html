@@ -1,10 +1,10 @@
-{{- /* 文章内广告位 - 在文章内容之后、页脚之前 */ -}}
-{{- if .Site.Params.adSenseArticleSlot }}
-<div class="ad-container ad-article" style="text-align:center;margin:2rem 0;">
+{{- /* 侧边栏广告位 */ -}}
+{{- if .Site.Params.adSenseSidebarSlot }}
+<div class="ad-container ad-sidebar" style="text-align:center;margin:1rem 0;">
   <ins class="adsbygoogle"
        style="display:block"
        data-ad-client="{{ .Site.Params.googleAdSensePubID }}"
-       data-ad-slot="{{ .Site.Params.adSenseArticleSlot }}"
+       data-ad-slot="{{ .Site.Params.adSenseSidebarSlot }}"
        data-ad-format="auto"
        data-full-width-responsive="true"></ins>
   <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>

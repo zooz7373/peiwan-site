@@ -13,6 +13,9 @@ buildExpired = false
 [params]
   env = "production"
   googleAdSensePubID = "ca-pub-1034242368296332"
+  # 广告单元 ID - 审核通过后在 AdSense 创建广告单元，填入以下 ID
+  # adSenseArticleSlot = "文章内广告单元ID"
+  # adSenseFooterSlot = "页脚广告单元ID"
   title = "陪玩 - 游戏攻略大全"
   description = "最新最全的游戏攻略、手游推荐、游戏技巧。王者荣耀、原神、和平精英、LOL手游、蛋仔派对攻略一站搞定。"
   keywords = ["游戏攻略", "手游推荐", "王者荣耀攻略", "原神攻略", "和平精英攻略", "LOL手游攻略", "蛋仔派对攻略"]
