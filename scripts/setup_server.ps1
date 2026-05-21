@@ -26,13 +26,14 @@ if (-not $python) {
 }
 Write-Host "  [OK] Python" -ForegroundColor Green
 
-Write-Host "  Installing anthropic package..." -ForegroundColor Gray
-$pipResult = python -m pip install anthropic --quiet 2>&1
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "  [WARN] pip install returned exit code $LASTEXITCODE" -ForegroundColor Yellow
-    Write-Host "  Output: $pipResult" -ForegroundColor Gray
+Write-Host "  Checking anthropic package..." -ForegroundColor Gray
+$hasAnthropic = python -c "import anthropic; print('ok')" 2>$null
+if ($hasAnthropic -eq "ok") {
+    Write-Host "  [OK] anthropic already installed" -ForegroundColor Green
 } else {
-    Write-Host "  [OK] anthropic" -ForegroundColor Green
+    Write-Host "  Installing anthropic..." -ForegroundColor Gray
+    python -m pip install anthropic
+    Write-Host "  [OK] anthropic installed" -ForegroundColor Green
 }
 
 $git = Get-Command git -ErrorAction SilentlyContinue
