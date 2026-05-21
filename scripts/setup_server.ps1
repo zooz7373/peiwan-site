@@ -27,7 +27,11 @@ if (-not $python) {
 Write-Host "  [OK] Python" -ForegroundColor Green
 
 Write-Host "  Installing anthropic package..." -ForegroundColor Gray
-pip install anthropic --quiet 2>$null
+pip install anthropic --quiet -i https://pypi.tuna.tsinghua.edu.cn/simple 2>$null
+if (-not $?) {
+    Write-Host "  Retrying with default source..." -ForegroundColor Gray
+    pip install anthropic --quiet 2>$null
+}
 Write-Host "  [OK] anthropic" -ForegroundColor Green
 
 $git = Get-Command git -ErrorAction SilentlyContinue
