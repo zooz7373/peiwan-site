@@ -46,7 +46,9 @@ GENERATED_LOG = SCRIPT_DIR / "generated.json"
 
 API_KEY = os.environ.get("MIMO_API_KEY", os.environ.get("ANTHROPIC_AUTH_TOKEN", ""))
 API_BASE = os.environ.get("MIMO_API_BASE", os.environ.get("ANTHROPIC_BASE_URL", "https://token-plan-cn.xiaomimimo.com/anthropic"))
-MODEL = os.environ.get("MIMO_MODEL", os.environ.get("ANTHROPIC_MODEL", "mimo-v2.5-pro"))
+MODEL = os.environ.get("MIMO_MODEL", os.environ.get("ANTHROPIC_MODEL", ""))
+if not MODEL:
+    MODEL = "mimo-v2.5-pro"
 
 GAME_NAMES = {
     "wangzhe": "王者荣耀",
