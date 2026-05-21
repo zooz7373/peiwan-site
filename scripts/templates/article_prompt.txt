@@ -47,10 +47,10 @@
 
 严格按以下格式输出，不要加任何多余内容：
 
-TITLE: {文章标题}
-META: {Meta Description}
-CATEGORY: {分类英文标识}
+TITLE: [文章标题]
+META: [Meta Description]
+CATEGORY: [分类英文标识]
 
 ---
 
-{文章正文，Markdown 格式}
+[文章正文，Markdown 格式]
