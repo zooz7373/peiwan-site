@@ -46,7 +46,7 @@ GENERATED_LOG = SCRIPT_DIR / "generated.json"
 
 API_KEY = os.environ.get("MIMO_API_KEY", "")
 API_BASE = os.environ.get("MIMO_API_BASE", "https://token-plan-cn.xiaomimimo.com/anthropic")
-MODEL = os.environ.get("MIMO_MODEL", "mimo-v2-flash")
+MODEL = os.environ.get("MIMO_MODEL", "mimo-v2.5-pro")
 
 GAME_NAMES = {
     "wangzhe": "王者荣耀",

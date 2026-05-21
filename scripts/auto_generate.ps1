@@ -26,7 +26,7 @@ $env:MIMO_API_KEY = $apiKey
 $env:MIMO_API_BASE = [System.Environment]::GetEnvironmentVariable("MIMO_API_BASE", "User")
 if (-not $env:MIMO_API_BASE) { $env:MIMO_API_BASE = "https://token-plan-cn.xiaomimimo.com/anthropic" }
 $env:MIMO_MODEL = [System.Environment]::GetEnvironmentVariable("MIMO_MODEL", "User")
-if (-not $env:MIMO_MODEL) { $env:MIMO_MODEL = "mimo-v2-flash" }
+if (-not $env:MIMO_MODEL) { $env:MIMO_MODEL = "mimo-v2.5-pro" }
 
 # 生成 10 篇文章
 Write-Log "开始生成文章..."

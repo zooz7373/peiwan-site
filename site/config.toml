@@ -3,7 +3,8 @@ languageCode = "zh-cn"
 defaultContentLanguage = "zh"
 title = "陪玩 - 游戏攻略大全"
 theme = "PaperMod"
-paginate = 20
+[pagination]
+  pagerSize = 20
 enableRobotsTXT = true
 buildDrafts = false
 buildFuture = false

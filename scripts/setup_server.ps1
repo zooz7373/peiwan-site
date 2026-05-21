@@ -5,7 +5,7 @@
 param(
     [string]$ApiKey,
     [string]$ApiBase = "https://token-plan-cn.xiaomimimo.com/anthropic",
-    [string]$Model = "mimo-v2-flash",
+    [string]$Model = "mimo-v2.5-pro",
     [string]$RepoUrl = ""
 )
 
