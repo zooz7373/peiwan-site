@@ -1,0 +1,119 @@
+baseURL = "https://peiwan.co/"
+languageCode = "zh-cn"
+defaultContentLanguage = "zh"
+title = "陪玩 - 游戏攻略大全"
+theme = "PaperMod"
+paginate = 20
+enableRobotsTXT = true
+buildDrafts = false
+buildFuture = false
+buildExpired = false
+
+[params]
+  env = "production"
+  title = "陪玩 - 游戏攻略大全"
+  description = "最新最全的游戏攻略、手游推荐、游戏技巧。王者荣耀、原神、和平精英、LOL手游、蛋仔派对攻略一站搞定。"
+  keywords = ["游戏攻略", "手游推荐", "王者荣耀攻略", "原神攻略", "和平精英攻略", "LOL手游攻略", "蛋仔派对攻略"]
+  author = "peiwan.co"
+  DateFormat = "2006-01-02"
+  defaultTheme = "auto"
+  ShowReadingTime = true
+  ShowShareButtons = false
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = false
+  ShowToc = true
+  TocOpen = false
+  comments = false
+
+  [params.homeInfoParams]
+    Title = "陪玩 - 游戏攻略大全"
+    Content = "王者荣耀、原神、和平精英、LOL手游、蛋仔派对，最新攻略、上分技巧、英雄推荐一站搞定。"
+
+  [[params.socialIcons]]
+    name = "rss"
+    url = "index.xml"
+
+  [params.assets]
+    disableFingerprinting = true
+
+  [params.cover]
+    hidden = false
+    hiddenInList = false
+    hiddenInSingle = false
+
+  # Google Analytics - 替换为你的 G-XXXXXXXXXX
+  # googleAnalytics = "G-XXXXXXXXXX"
+
+  # Google AdSense - 替换为你的发布商 ID
+  # googleAdSensePubID = "ca-pub-XXXXXXXXXXXXXXXX"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    codeFences = false
+    guessSyntax = false
+    lineNos = false
+    style = "monokai"
+
+[sitemap]
+  changefreq = "daily"
+  filename = "sitemap.xml"
+  priority = 0.5
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
+[menu]
+  [[menu.main]]
+    identifier = "wangzhe"
+    name = "王者荣耀"
+    url = "/categories/王者荣耀/"
+    weight = 10
+  [[menu.main]]
+    identifier = "yuanshen"
+    name = "原神"
+    url = "/categories/原神/"
+    weight = 20
+  [[menu.main]]
+    identifier = "hepingjingying"
+    name = "和平精英"
+    url = "/categories/和平精英/"
+    weight = 30
+  [[menu.main]]
+    identifier = "lolm"
+    name = "LOL手游"
+    url = "/categories/LOL手游/"
+    weight = 40
+  [[menu.main]]
+    identifier = "danzaipaidui"
+    name = "蛋仔派对"
+    url = "/categories/蛋仔派对/"
+    weight = 50
+  [[menu.main]]
+    identifier = "archives"
+    name = "归档"
+    url = "/archives/"
+    weight = 60
+  [[menu.main]]
+    identifier = "search"
+    name = "搜索"
+    url = "/search/"
+    weight = 70
+  [[menu.main]]
+    identifier = "about"
+    name = "关于"
+    url = "/about/"
+    weight = 80
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[frontmatter]
+  lastmod = ["lastmod", ":fileModTime", ":default"]

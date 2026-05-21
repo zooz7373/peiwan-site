@@ -1,0 +1,36 @@
+{{- /* Google Analytics */ -}}
+{{- if .Site.Params.googleAnalytics }}
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.googleAnalytics }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{ .Site.Params.googleAnalytics }}');
+</script>
+{{- end }}
+
+{{- /* Google AdSense */ -}}
+{{- if .Site.Params.googleAdSensePubID }}
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ .Site.Params.googleAdSensePubID }}" crossorigin="anonymous"></script>
+{{- end }}
+
+{{- /* 百度统计 */ -}}
+{{- if .Site.Params.baiduAnalytics }}
+<!-- 百度统计 -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?{{ .Site.Params.baiduAnalytics }}";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+{{- end }}
+
+{{- /* Article Schema (结构化数据) */ -}}
+{{- if .IsPage }}
+{{- partial "schema_article.html" . }}
+{{- end }}

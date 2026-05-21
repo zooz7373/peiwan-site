@@ -1,0 +1,26 @@
+# Environment
+.env
+.env.local
+
+# Hugo
+site/public/
+site/resources/
+site/.hugo_build.lock
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated content log (tracked for resume)
+# scripts/generated.json - keep this tracked so we know what's been generated
