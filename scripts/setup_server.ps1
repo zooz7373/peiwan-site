@@ -27,12 +27,13 @@ if (-not $python) {
 Write-Host "  [OK] Python" -ForegroundColor Green
 
 Write-Host "  Installing anthropic package..." -ForegroundColor Gray
-pip install anthropic --quiet -i https://pypi.tuna.tsinghua.edu.cn/simple 2>$null
-if (-not $?) {
-    Write-Host "  Retrying with default source..." -ForegroundColor Gray
-    pip install anthropic --quiet 2>$null
+$pipResult = python -m pip install anthropic --quiet 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "  [WARN] pip install returned exit code $LASTEXITCODE" -ForegroundColor Yellow
+    Write-Host "  Output: $pipResult" -ForegroundColor Gray
+} else {
+    Write-Host "  [OK] anthropic" -ForegroundColor Green
 }
-Write-Host "  [OK] anthropic" -ForegroundColor Green
 
 $git = Get-Command git -ErrorAction SilentlyContinue
 if (-not $git) {
