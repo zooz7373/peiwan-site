@@ -1,0 +1,116 @@
+{{ define "main" }}
+
+{{- if (and site.Params.profileMode.enabled .IsHome) }}
+{{- partial "index_profile.html" . }}
+{{- else }}
+
+{{- $pages := union .RegularPages .Sections }}
+{{- if .IsHome }}
+{{- $pages = where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true" }}
+{{- end }}
+
+{{- $paginator := .Paginate $pages }}
+
+{{- if and .IsHome site.Params.homeInfoParams (eq $paginator.PageNumber 1) }}
+{{- partial "home_info.html" . }}
+{{- end }}
+
+{{- if and .IsHome (eq $paginator.PageNumber 1) }}
+<!-- Game Category Cards -->
+<section class="game-categories">
+    <a href="/wangzhe/" class="game-card" style="border-color: rgba(0, 212, 255, 0.3);">
+        <div class="game-icon" style="color: var(--accent-cyan);">⚔️</div>
+        <div class="game-name">王者荣耀</div>
+        <div class="game-count">上分攻略 · 英雄推荐</div>
+    </a>
+    <a href="/yuanshen/" class="game-card" style="border-color: rgba(168, 85, 247, 0.3);">
+        <div class="game-icon" style="color: var(--accent-purple);">🌟</div>
+        <div class="game-name">原神</div>
+        <div class="game-count">角色培养 · 深渊攻略</div>
+    </a>
+    <a href="/hepingjingying/" class="game-card" style="border-color: rgba(34, 197, 94, 0.3);">
+        <div class="game-icon" style="color: var(--accent-green);">🎯</div>
+        <div class="game-name">和平精英</div>
+        <div class="game-count">压枪技巧 · 吃鸡攻略</div>
+    </a>
+    <a href="/lolm/" class="game-card" style="border-color: rgba(249, 115, 22, 0.3);">
+        <div class="game-icon" style="color: var(--accent-orange);">🏆</div>
+        <div class="game-name">LOL手游</div>
+        <div class="game-count">出装推荐 · 符文搭配</div>
+    </a>
+    <a href="/danzaipaidui/" class="game-card" style="border-color: rgba(236, 72, 153, 0.3);">
+        <div class="game-icon" style="color: var(--accent-pink);">🎮</div>
+        <div class="game-name">蛋仔派对</div>
+        <div class="game-count">竞速技巧 · 地图工坊</div>
+    </a>
+</section>
+{{- end }}
+
+{{- $term := .Data.Term }}
+{{- range $index, $page := $paginator.Pages }}
+
+{{- $class := "post-entry" }}
+
+{{- $user_preferred := or site.Params.disableSpecial1stPost site.Params.homeInfoParams }}
+{{- if (and $.IsHome (eq $paginator.PageNumber 1) (eq $index 0) (not $user_preferred)) }}
+{{- $class = "first-entry" }}
+{{- else if $term }}
+{{- $class = "post-entry tag-entry" }}
+{{- end }}
+
+<article class="{{ $class }}">
+  {{- $isHidden := (.Param "cover.hiddenInList") | default (.Param "cover.hidden") | default false }}
+  {{- partial "cover.html" (dict "cxt" . "IsSingle" false "isHidden" $isHidden) }}
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">
+      {{- .Title }}
+      {{- if .Draft }}
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
+          <path d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+      {{- end }}
+    </h2>
+  </header>
+  {{- if (ne (.Param "hideSummary") true) }}
+  <div class="entry-content">
+    <p>{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}...{{ end }}</p>
+  </div>
+  {{- end }}
+  {{- if not (.Param "hideMeta") }}
+  <footer class="entry-footer">
+    {{- partial "post_meta.html" . -}}
+  </footer>
+  {{- end }}
+  <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
+</article>
+{{- end }}
+
+{{- if gt $paginator.TotalPages 1 }}
+<footer class="page-footer">
+  <nav class="pagination">
+    {{- if $paginator.HasPrev }}
+    <a class="prev" href="{{ $paginator.Prev.URL | absURL }}">
+      «&nbsp;{{ i18n "prev_page" }}&nbsp;
+      {{- if (.Param "ShowPageNums") }}
+      {{- sub $paginator.PageNumber 1 }}/{{ $paginator.TotalPages }}
+      {{- end }}
+    </a>
+    {{- end }}
+    {{- if $paginator.HasNext }}
+    <a class="next" href="{{ $paginator.Next.URL | absURL }}">
+      {{- i18n "next_page" }}&nbsp;
+      {{- if (.Param "ShowPageNums") }}
+      {{- add 1 $paginator.PageNumber }}/{{ $paginator.TotalPages }}
+      {{- end }}&nbsp;»
+    </a>
+    {{- end }}
+  </nav>
+</footer>
+{{- end }}
+
+{{- end }}
+
+{{- end }}

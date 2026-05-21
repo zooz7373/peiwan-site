@@ -15,6 +15,12 @@
 - **服务器**: 阿里云 4 核 8G Windows（已有）
 - **域名**: peiwan.co（已有）
 
+## 服务器清单
+
+| 服务器 | IP | 系统 | 用途 | SSH 连接命令 |
+|--------|-----|------|------|-------------|
+| Windows-snxr | `101.200.50.157` | Windows Server 2022 | 游戏内容站 | `ssh -i ~/.ssh/id_ed25519_win -o ServerAliveInterval=60 -o ServerAliveCountMax=3 Administrator@101.200.50.157` |
+
 ## 项目结构
 
 ```

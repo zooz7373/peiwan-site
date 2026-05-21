@@ -69,30 +69,30 @@ buildExpired = false
   tag = "tags"
 
 [menu]
-  [[menu.main]]
+    [[menu.main]]
     identifier = "wangzhe"
     name = "王者荣耀"
-    url = "/categories/王者荣耀/"
+    url = "/wangzhe/"
     weight = 10
   [[menu.main]]
     identifier = "yuanshen"
     name = "原神"
-    url = "/categories/原神/"
+    url = "/yuanshen/"
     weight = 20
   [[menu.main]]
     identifier = "hepingjingying"
     name = "和平精英"
-    url = "/categories/和平精英/"
+    url = "/hepingjingying/"
     weight = 30
   [[menu.main]]
     identifier = "lolm"
     name = "LOL手游"
-    url = "/categories/LOL手游/"
+    url = "/lolm/"
     weight = 40
   [[menu.main]]
     identifier = "danzaipaidui"
     name = "蛋仔派对"
-    url = "/categories/蛋仔派对/"
+    url = "/danzaipaidui/"
     weight = 50
   [[menu.main]]
     identifier = "archives"
