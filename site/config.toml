@@ -12,6 +12,7 @@ buildExpired = false
 
 [params]
   env = "production"
+  googleAdSensePubID = "ca-pub-1034242368296332"
   title = "陪玩 - 游戏攻略大全"
   description = "最新最全的游戏攻略、手游推荐、游戏技巧。王者荣耀、原神、和平精英、LOL手游、蛋仔派对攻略一站搞定。"
   keywords = ["游戏攻略", "手游推荐", "王者荣耀攻略", "原神攻略", "和平精英攻略", "LOL手游攻略", "蛋仔派对攻略"]
@@ -46,8 +47,6 @@ buildExpired = false
   # Google Analytics - 替换为你的 G-XXXXXXXXXX
   # googleAnalytics = "G-XXXXXXXXXX"
 
-  # Google AdSense - 替换为你的发布商 ID
-  # googleAdSensePubID = "ca-pub-XXXXXXXXXXXXXXXX"
 
 [markup]
   [markup.goldmark]
