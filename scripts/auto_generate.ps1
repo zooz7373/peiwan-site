@@ -39,26 +39,26 @@ if ($exitCode -eq 0) {
     Write-Log "[WARN] 文章生成过程中有错误 (exit code: $exitCode)"
 }
 
-# 构建 Hugo（验证无错误）
-Write-Log "构建 Hugo..."
-hugo -s "$repoDir\site" --minify --quiet 2>&1 | ForEach-Object { Write-Log $_ }
+# 构建 Hugo 并部署到 Nginx
+Write-Log "Building Hugo site..."
+hugo -s "$repoDir\site" --minify --destination C:\www\peiwan 2>&1 | ForEach-Object { Write-Log $_ }
 
 if ($?) {
-    Write-Log "Hugo 构建成功"
+    Write-Log "Site deployed to C:\www\peiwan"
 } else {
-    Write-Log "[WARN] Hugo 构建失败"
+    Write-Log "[WARN] Hugo build failed"
 }
 
 # 推送（如果 generate.py 没有推送的话）
-Write-Log "推送到 GitHub..."
+Write-Log "Pushing to GitHub..."
 git -C $repoDir add .
 $status = git -C $repoDir status --porcelain
 if ($status) {
-    git -C $repoDir commit -m "feat: 自动新增内容 $(Get-Date -Format 'yyyy-MM-dd')"
+    git -C $repoDir commit -m "feat: auto content update $(Get-Date -Format 'yyyy-MM-dd')"
     git -C $repoDir push
-    Write-Log "已推送到 GitHub"
+    Write-Log "Pushed to GitHub"
 } else {
-    Write-Log "没有新变更需要推送"
+    Write-Log "No changes to push"
 }
 
-Write-Log "========== 自动生成完成 =========="
+Write-Log "========== Auto generation complete =========="
