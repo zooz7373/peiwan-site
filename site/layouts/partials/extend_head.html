@@ -30,6 +30,9 @@ var _hmt = _hmt || [];
 </script>
 {{- end }}
 
+{{- /* Custom CSS */ -}}
+<link rel="stylesheet" href="{{ "css/custom.css" | absURL }}">
+
 {{- /* Article Schema (结构化数据) */ -}}
 {{- if .IsPage }}
 {{- partial "schema_article.html" . }}

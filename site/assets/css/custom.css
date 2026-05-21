@@ -1,0 +1,383 @@
+/* ============================================
+   peiwan.co - Dark Gaming Theme
+   ============================================ */
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #22223a;
+  --border-color: #2a2a4a;
+  --text-primary: #e8e8f0;
+  --text-secondary: #a0a0b8;
+  --text-muted: #6b6b8a;
+  --accent-cyan: #00d4ff;
+  --accent-purple: #a855f7;
+  --accent-pink: #ec4899;
+  --accent-orange: #f97316;
+  --accent-green: #22c55e;
+  --gradient-primary: linear-gradient(135deg, #00d4ff 0%, #a855f7 100%);
+  --gradient-hero: linear-gradient(180deg, rgba(0,212,255,0.15) 0%, transparent 60%);
+  --shadow-glow: 0 0 20px rgba(0,212,255,0.15);
+  --shadow-card: 0 4px 20px rgba(0,0,0,0.4);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+/* Base */
+body {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+
+/* Header / Nav */
+.header {
+  background: rgba(10, 10, 15, 0.85) !important;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header .nav a {
+  color: var(--text-secondary) !important;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.header .nav a:hover {
+  color: var(--accent-cyan) !important;
+}
+
+.header .nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gradient-primary);
+  transition: width 0.3s ease;
+}
+
+.header .nav a:hover::after {
+  width: 100%;
+}
+
+.logo a {
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hero Section */
+.home-info {
+  background: var(--gradient-hero);
+  padding: 60px 20px 40px !important;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.home-info .entry-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.home-info .entry-content {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Game Category Cards */
+.game-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.game-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none !important;
+  display: block;
+}
+
+.game-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-cyan);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow);
+}
+
+.game-card .game-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.game-card .game-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.game-card .game-count {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Article Cards */
+.post-entry {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 24px !important;
+  margin-bottom: 16px !important;
+  transition: all 0.3s ease;
+}
+
+.post-entry:hover {
+  background: var(--bg-card-hover) !important;
+  border-color: var(--accent-purple) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.post-entry .entry-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.post-entry .entry-header h2 a {
+  color: var(--text-primary) !important;
+  transition: color 0.2s ease;
+}
+
+.post-entry .entry-header h2 a:hover {
+  color: var(--accent-cyan) !important;
+}
+
+.post-entry .entry-content {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.post-entry .entry-footer {
+  margin-top: 12px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Category Tags */
+.post-tags a {
+  background: rgba(0, 212, 255, 0.1) !important;
+  color: var(--accent-cyan) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 20px !important;
+  padding: 4px 12px !important;
+  font-size: 0.8rem !important;
+  transition: all 0.2s ease;
+}
+
+.post-tags a:hover {
+  background: rgba(0, 212, 255, 0.2) !important;
+  border-color: var(--accent-cyan) !important;
+}
+
+/* Article Page */
+.post-single {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.post-single h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.post-single h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 32px;
+  margin-bottom: 16px;
+  color: var(--accent-cyan);
+  border-left: 4px solid var(--accent-cyan);
+  padding-left: 16px;
+}
+
+.post-single h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: var(--accent-purple);
+}
+
+.post-single p {
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.post-single strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.post-single ul, .post-single ol {
+  color: var(--text-secondary);
+  padding-left: 24px;
+  margin-bottom: 16px;
+}
+
+.post-single li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+/* Footer */
+.footer {
+  background: var(--bg-secondary) !important;
+  border-top: 1px solid var(--border-color);
+  padding: 40px 20px !important;
+  text-align: center;
+}
+
+.footer a {
+  color: var(--text-secondary) !important;
+  transition: color 0.2s ease;
+}
+
+.footer a:hover {
+  color: var(--accent-cyan) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
+
+/* Pagination */
+.pagination a {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+  border-radius: var(--radius-sm) !important;
+  transition: all 0.2s ease;
+}
+
+.pagination a:hover {
+  background: var(--bg-card-hover) !important;
+  border-color: var(--accent-cyan) !important;
+  color: var(--accent-cyan) !important;
+}
+
+/* Search */
+#searchbox input {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 12px 16px !important;
+}
+
+#searchbox input:focus {
+  border-color: var(--accent-cyan) !important;
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1) !important;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+}
+
+.breadcrumbs a {
+  color: var(--text-secondary) !important;
+}
+
+.breadcrumbs a:hover {
+  color: var(--accent-cyan) !important;
+}
+
+/* TOC */
+.toc {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.toc a {
+  color: var(--text-secondary) !important;
+  transition: color 0.2s ease;
+}
+
+.toc a:hover {
+  color: var(--accent-cyan) !important;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .home-info .entry-title {
+    font-size: 1.8rem;
+  }
+
+  .game-categories {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 20px 12px;
+  }
+
+  .post-single {
+    padding: 20px;
+  }
+
+  .post-entry {
+    padding: 16px !important;
+  }
+}
