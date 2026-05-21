@@ -285,9 +285,11 @@ def git_push(message: str) -> bool:
         subprocess.run(["git", "add", "."], cwd=repo_dir, check=True, capture_output=True)
         result = subprocess.run(
             ["git", "commit", "-m", message],
-            cwd=repo_dir, capture_output=True, text=True,
+            cwd=repo_dir, capture_output=True, text=True, encoding="utf-8",
         )
-        if "nothing to commit" in result.stdout or "nothing to commit" in result.stderr:
+        stdout = result.stdout or ""
+        stderr = result.stderr or ""
+        if "nothing to commit" in stdout or "nothing to commit" in stderr:
             print("  [GIT] 没有新变更")
             return True
 
@@ -295,7 +297,8 @@ def git_push(message: str) -> bool:
         print(f"  [GIT] 已推送到远程仓库")
         return True
     except subprocess.CalledProcessError as e:
-        print(f"  [GIT ERROR] {e.stderr}")
+        err = e.stderr or "unknown error"
+        print(f"  [GIT ERROR] {err}")
         return False
 
 
