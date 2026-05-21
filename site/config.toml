@@ -65,7 +65,6 @@ buildExpired = false
   priority = 0.5
 
 [taxonomies]
-  category = "categories"
   tag = "tags"
 
 [menu]
