@@ -48,9 +48,6 @@ buildExpired = false
   # Google AdSense - 替换为你的发布商 ID
   # googleAdSensePubID = "ca-pub-XXXXXXXXXXXXXXXX"
 
-[outputs]
-  home = ["HTML", "RSS", "JSON"]
-
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
