@@ -147,7 +147,7 @@ if ($?) {
 # ── Step 6: 测试内容生成 ──────────────────────────────
 
 Write-Host ""
-Write-Host "[6/6] 测试内容生成 (1 篇)..." -ForegroundColor Yellow
+Write-Host '[6/6] 测试内容生成 (1 篇)...' -ForegroundColor Yellow
 
 python "$repoDir\scripts\generate.py" --limit 1
 if ($?) {
