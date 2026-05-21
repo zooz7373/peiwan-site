@@ -24,3 +24,4 @@ Thumbs.db
 
 # Generated content log (tracked for resume)
 # scripts/generated.json - keep this tracked so we know what's been generated
+site/themes/PaperMod
