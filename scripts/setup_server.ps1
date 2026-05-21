@@ -106,10 +106,8 @@ Write-Host "[4/6] Installing Hugo theme..." -ForegroundColor Yellow
 
 $themeDir = "$repoDir\site\themes\PaperMod"
 if (-not (Test-Path $themeDir)) {
-    git submodule add --depth=1 https://github.com/adityatelange/hugo-PaperMod.git $themeDir 2>$null
-    if (-not $?) {
-        git clone --depth=1 https://github.com/adityatelange/hugo-PaperMod.git $themeDir 2>$null
-    }
+    Write-Host "  Cloning PaperMod theme..." -ForegroundColor Gray
+    git clone --depth=1 https://github.com/adityatelange/hugo-PaperMod.git $themeDir
     Write-Host "  [OK] PaperMod installed" -ForegroundColor Green
 } else {
     Write-Host "  [OK] PaperMod exists" -ForegroundColor Green
