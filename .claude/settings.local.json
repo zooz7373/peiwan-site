@@ -11,7 +11,11 @@
       "Bash(ssh -i ~/.ssh/id_ed25519_win -o ServerAliveInterval=60 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=no Administrator@101.200.50.157 'curl -s -H \"Authorization: RQ3hvCdTVnWJ5JbZ3FtVBh2Vx5gekJLg2bHG42TVQh0q0A7H6uPUKheq\" \"https://api.pexels.com/v1/search?query=food+noodle&per_page=1\" | python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d[\\\\\"photos\\\\\"][0][\\\\\"src\\\\\"][\\\\\"original\\\\\"]\\)\"')",
       "Bash(ssh -i ~/.ssh/id_ed25519_win -o ServerAliveInterval=60 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=no Administrator@101.200.50.157 'curl -s http://127.0.0.1:18789/api/ 2>&1 | python -c \"import sys; print\\(sys.stdin.read\\(\\)[:2000]\\)\"')",
       "Bash(ssh -i ~/.ssh/id_ed25519_win -o ServerAliveInterval=60 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=no Administrator@101.200.50.157 'curl -s http://127.0.0.1:18789/ 2>&1 | python -c \"import sys; print\\(sys.stdin.read\\(\\)[:3000]\\)\"')",
-      "Bash(ssh -i ~/.ssh/id_ed25519_win -o ServerAliveInterval=60 -o ServerAliveCountMax=3 Administrator@101.200.50.157 \"curl -s -k -H \\\\\"Authorization: Bearer c1e5ee9f04f570917c2874ab615775a4494fbb9039a069bf\\\\\" http://127.0.0.1:18789/ 2>&1 | head -50\")"
+      "Bash(ssh -i ~/.ssh/id_ed25519_win -o ServerAliveInterval=60 -o ServerAliveCountMax=3 Administrator@101.200.50.157 \"curl -s -k -H \\\\\"Authorization: Bearer c1e5ee9f04f570917c2874ab615775a4494fbb9039a069bf\\\\\" http://127.0.0.1:18789/ 2>&1 | head -50\")",
+      "Bash(curl -s https://peiwan.co/)",
+      "Bash(rm -rf public)",
+      "Bash(hugo --minify --destination F:/SEOAI/public)",
+      "Bash(curl -s \"https://peiwan.co/wangzhe/20260521120205-%E7%8E%8B%E8%80%85%E8%8D%A3%E8%80%80S35%E8%B5%9B%E5%AD%A3%E4%B8%8A%E5%88%86%E8%8B%B1%E9%9B%84%E6%8E%A8%E8%8D%90/\")"
     ]
   }
 }
