@@ -1,2 +1,135 @@
 {{- /* 文章内容后插入广告 */ -}}
 {{- partial "adsense_article.html" . }}
+
+<!-- Share Bar -->
+<div class="share-bar">
+  <button class="share-btn" onclick="shareArticle()" aria-label="分享文章">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    分享给朋友
+  </button>
+</div>
+
+<!-- Toast -->
+<div id="share-toast" class="share-toast">
+  <div class="share-toast-inner">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+    <p class="share-toast-title">链接已复制！</p>
+    <p class="share-toast-desc">打开微信，点击右上角 <strong>&middot;&middot;&middot;</strong> 粘贴链接分享到朋友圈</p>
+    <button class="share-toast-close" onclick="closeToast()">知道了</button>
+  </div>
+</div>
+
+<style>
+.share-bar {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color, #1e1e3a);
+  text-align: center;
+}
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #00d4ff 0%, #a855f7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0,212,255,0.2);
+}
+.share-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0,212,255,0.3);
+}
+.share-btn:active {
+  transform: scale(0.97);
+}
+.share-toast {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+.share-toast.show {
+  display: flex;
+}
+.share-toast-inner {
+  background: #1a1a2e;
+  border: 1px solid #2a2a4a;
+  border-radius: 20px;
+  padding: 36px 32px;
+  text-align: center;
+  max-width: 320px;
+  width: 90%;
+  animation: toastIn 0.3s ease;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.share-toast-title {
+  color: #e8e8f0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 12px 0 8px;
+}
+.share-toast-desc {
+  color: #9898b4;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.share-toast-desc strong {
+  color: #00d4ff;
+}
+.share-toast-close {
+  padding: 10px 40px;
+  background: rgba(0,212,255,0.15);
+  color: #00d4ff;
+  border: 1px solid rgba(0,212,255,0.3);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.share-toast-close:hover {
+  background: rgba(0,212,255,0.25);
+}
+</style>
+
+<script>
+function shareArticle() {
+  var text = document.title + '\n' + location.href;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(showToast);
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast();
+  }
+}
+function showToast() {
+  document.getElementById('share-toast').classList.add('show');
+}
+function closeToast() {
+  document.getElementById('share-toast').classList.remove('show');
+}
+document.getElementById('share-toast').addEventListener('click', function(e) {
+  if (e.target === this) closeToast();
+});
+</script>
