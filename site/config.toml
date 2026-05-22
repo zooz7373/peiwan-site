@@ -29,7 +29,9 @@ buildExpired = false
   ShowCodeCopyButtons = false
   ShowToc = true
   TocOpen = false
+  ShowPageNums = true
   comments = false
+  mainSections = ["wangzhe", "yuanshen", "hepingjingying", "lolm", "danzaipaidui", "xingqiongtiedao", "jinchanchanzhizhan"]
 
   [params.homeInfoParams]
     Title = "陪玩 - 游戏攻略大全"

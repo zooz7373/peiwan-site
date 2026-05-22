@@ -442,6 +442,16 @@ body::before {
   box-shadow: 0 4px 16px rgba(0,212,255,0.1);
 }
 
+.pagination a.active,
+.pagination a[aria-current="page"] {
+  background: rgba(0,212,255,0.15) !important;
+  border-color: var(--accent-cyan) !important;
+  color: var(--accent-cyan) !important;
+  font-weight: 700;
+  cursor: default;
+  pointer-events: none;
+}
+
 /* ========== Search ========== */
 #searchbox input {
   background: var(--bg-card) !important;
