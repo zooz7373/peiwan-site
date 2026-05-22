@@ -1,6 +1,6 @@
 # peiwan.co 自动内容生成脚本
 # 由 Windows 计划任务定时调用
-# 每天凌晨 3:00 运行，生成 10 篇文章并推送到 GitHub
+# 每天凌晨 3:00 运行，按游戏权重分配生成文章并推送到 GitHub
 
 $ErrorActionPreference = "Continue"
 
@@ -28,9 +28,9 @@ if (-not $env:MIMO_API_BASE) { $env:MIMO_API_BASE = "https://token-plan-cn.xiaom
 $env:MIMO_MODEL = [System.Environment]::GetEnvironmentVariable("MIMO_MODEL", "User")
 if (-not $env:MIMO_MODEL) { $env:MIMO_MODEL = "mimo-v2.5-pro" }
 
-# 生成 10 篇文章
-Write-Log "开始生成文章..."
-python "$PSScriptRoot\generate.py" --limit 10 --push
+# 按游戏权重生成文章（默认 8 篇，由 generate.py 内部 GAME_WEIGHTS 控制）
+Write-Log "开始按权重生成文章..."
+python "$PSScriptRoot\generate.py" --push
 $exitCode = $LASTEXITCODE
 
 if ($exitCode -eq 0) {

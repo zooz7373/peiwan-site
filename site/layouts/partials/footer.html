@@ -1,0 +1,12 @@
+{{- if not (.Param "hideFooter") }}
+<footer class="footer">
+    <span>&copy; {{ now.Year }} <a href="{{ "" | absLangURL }}">{{ site.Title }}</a></span>
+    {{- print " · " }}
+    <span><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">京ICP备2024101030号</a></span>
+    {{- with site.Params.footer.text }}
+    {{- print " · " }}
+    {{ . | markdownify }}
+    {{- end }}
+    {{- partial "extend_footer.html" . }}
+</footer>
+{{- end }}

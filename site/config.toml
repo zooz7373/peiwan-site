@@ -17,8 +17,8 @@ buildExpired = false
   # adSenseArticleSlot = "文章内广告单元ID"
   # adSenseFooterSlot = "页脚广告单元ID"
   title = "陪玩 - 游戏攻略大全"
-  description = "最新最全的游戏攻略、手游推荐、游戏技巧。王者荣耀、原神、和平精英、LOL手游、蛋仔派对攻略一站搞定。"
-  keywords = ["游戏攻略", "手游推荐", "王者荣耀攻略", "原神攻略", "和平精英攻略", "LOL手游攻略", "蛋仔派对攻略"]
+  description = "最新最全的游戏攻略、手游推荐、游戏技巧。王者荣耀、原神、和平精英、LOL手游、蛋仔派对、崩坏星穹铁道、金铲铲之战攻略一站搞定。"
+  keywords = ["游戏攻略", "手游推荐", "王者荣耀攻略", "原神攻略", "和平精英攻略", "LOL手游攻略", "蛋仔派对攻略", "崩坏星穹铁道攻略", "金铲铲之战攻略"]
   author = "peiwan.co"
   DateFormat = "2006-01-02"
   defaultTheme = "dark"
@@ -33,7 +33,7 @@ buildExpired = false
 
   [params.homeInfoParams]
     Title = "陪玩 - 游戏攻略大全"
-    Content = "王者荣耀、原神、和平精英、LOL手游、蛋仔派对，最新攻略、上分技巧、英雄推荐一站搞定。"
+    Content = "王者荣耀、原神、和平精英、LOL手游、蛋仔派对、崩坏星穹铁道、金铲铲之战，最新攻略、上分技巧、英雄推荐一站搞定。"
 
   [[params.socialIcons]]
     name = "rss"
@@ -96,20 +96,30 @@ buildExpired = false
     url = "/danzaipaidui/"
     weight = 50
   [[menu.main]]
+    identifier = "xingqiongtiedao"
+    name = "星穹铁道"
+    url = "/xingqiongtiedao/"
+    weight = 55
+  [[menu.main]]
+    identifier = "jinchanchanzhizhan"
+    name = "金铲铲之战"
+    url = "/jinchanchanzhizhan/"
+    weight = 60
+  [[menu.main]]
     identifier = "archives"
     name = "归档"
     url = "/archives/"
-    weight = 60
+    weight = 70
   [[menu.main]]
     identifier = "search"
     name = "搜索"
     url = "/search/"
-    weight = 70
+    weight = 80
   [[menu.main]]
     identifier = "about"
     name = "关于"
     url = "/about/"
-    weight = 80
+    weight = 90
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]

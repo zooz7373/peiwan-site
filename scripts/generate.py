@@ -56,6 +56,19 @@ GAME_NAMES = {
     "hepingjingying": "和平精英",
     "lolm": "LOL手游",
     "danzaipaidui": "蛋仔派对",
+    "xingqiongtiedao": "崩坏：星穹铁道",
+    "jinchanchanzhizhan": "金铲铲之战",
+}
+
+# 每日每款游戏的发帖权重
+GAME_WEIGHTS = {
+    "wangzhe": 2,
+    "yuanshen": 1,
+    "hepingjingying": 1,
+    "lolm": 1,
+    "danzaipaidui": 1,
+    "xingqiongtiedao": 1,
+    "jinchanchanzhizhan": 1,
 }
 
 
@@ -70,6 +83,7 @@ AI_PATTERNS = [
     r"(如果你有|如果你还|如有疑问|欢迎在评论)",
     r"(需要注意的是|值得一提的是|不可否认|毋庸置疑)",
     r"(提供了.*保障|奠定了.*基础|发挥了.*作用)",
+    r"(评论区问|评论区见|评论区聊|评论区再问|留言区问|评论区留言)",
 ]
 
 REPLACE_MAP = {
@@ -81,7 +95,7 @@ REPLACE_MAP = {
     "值得注意的是：": ["还有个事", "对了", ""],
     "需要指出的是：": ["说个重点", "注意下", ""],
     "希望这篇攻略对你有帮助！": ["就这些，去试试吧", "差不多就这些", "好了开冲"],
-    "如果你还有其他问题，欢迎在评论区留言。": ["有不懂的评论区问", ""],
+    "如果你还有其他问题，欢迎在评论区留言。": ["去试试吧", ""],
     "接下来让我们": ["咱们直接看", "看看"],
     "在当今": ["现在", ""],
     "提供了有力的保障": ["很有用", "帮大忙了"],
@@ -110,6 +124,59 @@ def reduce_ai_flavor(text: str) -> str:
                 stripped = stripped.replace(old, replacement, 1)
 
         stripped = re.sub(r"了了+", "了", stripped)
+        result.append(stripped)
+
+    return "\n".join(result)
+
+
+COMMENT_ENDING_REPLACEMENTS = [
+    "去试试吧",
+    "就这样，冲就完了",
+    "好了就这样",
+    "去游戏里练练吧",
+]
+
+COMMENT_REF_PATTERNS = [
+    # 匹配结尾段中引用评论区的各种表述（不含正文叙事中的合理用法）
+    r"(有[啥什]?(不懂|明白|问题|具体.*问题).*?)(评论区|留言区)[^。\n]*[。！]?",
+    r"(评论区|留言区)(问|见|聊|再问|再聊|唠唠|甩出来)[^。\n]*[。！]?",
+    r"(不懂的|不明白的|有啥问题|有啥具体.*的).*?(评论区|留言区)[^。\n]*[。！]?",
+    r"(评论区|留言区)(或者.*?群里)?找我[^。\n]*[。！]?",
+]
+
+
+def remove_comment_references(text: str) -> str:
+    """后处理：移除指向评论区的表述（网站无评论功能）"""
+    lines = text.split("\n")
+
+    # 只处理文章最后 15 行（结尾段），中间的叙事评论区引用保留
+    tail_start = max(0, len(lines) - 15)
+    result = lines[:tail_start]
+    tail_lines = lines[tail_start:]
+
+    for line in tail_lines:
+        stripped = line.strip()
+        if not stripped:
+            result.append(line)
+            continue
+
+        # 跳过正文叙事中的评论区引用（"评论区一片骂声"、"评论区炸锅"）
+        if re.search(r"评论区(一片|炸锅|全是|刷屏|都)", stripped):
+            result.append(line)
+            continue
+
+        original = stripped
+        for pattern in COMMENT_REF_PATTERNS:
+            if re.search(pattern, stripped):
+                replacement = random.choice(COMMENT_ENDING_REPLACEMENTS)
+                # 用替换值替换整行中匹配评论区的部分
+                stripped = re.sub(pattern, replacement, stripped)
+                break
+
+        # 兜底：简单包含"评论区"或"留言区"的结尾行
+        if stripped == original and re.search(r"(评论区|留言区)", stripped):
+            stripped = random.choice(COMMENT_ENDING_REPLACEMENTS)
+
         result.append(stripped)
 
     return "\n".join(result)
@@ -227,6 +294,9 @@ def parse_article(raw_text: str) -> dict:
     # 后处理：降低 AI 味
     body = reduce_ai_flavor(body)
 
+    # 后处理：移除评论区引用（网站无评论功能）
+    body = remove_comment_references(body)
+
     if not title:
         title = lines[0][:50] if lines else "未命名文章"
     if not meta:
@@ -307,6 +377,34 @@ def git_push(message: str) -> bool:
 # ── 主流程 ──────────────────────────────────────────────
 
 
+def select_by_weight(all_pending: list[dict], limit: int | None = None) -> list[dict]:
+    """按游戏权重从待生成关键词中选取"""
+    # 按游戏分组
+    by_category: dict[str, list[dict]] = {}
+    for kw in all_pending:
+        by_category.setdefault(kw["category"], []).append(kw)
+
+    # 按权重取每款游戏的文章数
+    selected = []
+    for category, weight in GAME_WEIGHTS.items():
+        cat_pending = by_category.get(category, [])
+        count = min(weight, len(cat_pending))
+        selected.extend(cat_pending[:count])
+
+    # 有未配置权重的游戏，也各取 1 篇
+    for category, cat_pending in by_category.items():
+        if category not in GAME_WEIGHTS and cat_pending:
+            selected.append(cat_pending[0])
+
+    # 打乱顺序，避免同一游戏连续生成
+    random.shuffle(selected)
+
+    if limit:
+        selected = selected[:limit]
+
+    return selected
+
+
 def main():
     parser = argparse.ArgumentParser(description="peiwan.co 内容批量生成 (MiMo API)")
     parser.add_argument("--category", help="只生成指定分类")
@@ -323,15 +421,27 @@ def main():
     keywords = load_keywords(args.category)
     generated = load_generated()
 
-    pending = [k for k in keywords if k["keyword"] not in generated]
-    if args.limit:
-        pending = pending[:args.limit]
+    all_pending = [k for k in keywords if k["keyword"] not in generated]
+
+    # 指定分类时走顺序模式，否则按权重分配
+    if args.category:
+        pending = all_pending[:args.limit] if args.limit else all_pending
+    else:
+        pending = select_by_weight(all_pending, args.limit)
 
     print(f"\nAPI: {API_BASE}")
     print(f"模型: {MODEL}")
     print(f"关键词总数: {len(keywords)}")
     print(f"已生成: {len(generated)}")
-    print(f"待生成: {len(pending)}")
+    print(f"待生成(全部): {len(all_pending)}")
+    print(f"本次选取: {len(pending)}")
+
+    # 显示每款游戏分配情况
+    from collections import Counter
+    cat_counts = Counter(kw["category"] for kw in pending)
+    for cat, count in sorted(cat_counts.items()):
+        name = GAME_NAMES.get(cat, cat)
+        print(f"  {name}: {count} 篇")
 
     if args.dry_run:
         print("\n[DRY RUN] 预览待生成文章:")
