@@ -60,16 +60,27 @@ GAME_NAMES = {
     "jinchanchanzhizhan": "金铲铲之战",
 }
 
-# 每日每款游戏的发帖权重
+# 每日每款游戏的发帖权重（总计 2 篇/天，模拟真人更新节奏）
 GAME_WEIGHTS = {
-    "wangzhe": 2,
-    "yuanshen": 1,
-    "hepingjingying": 1,
-    "lolm": 1,
-    "danzaipaidui": 1,
-    "xingqiongtiedao": 1,
+    "wangzhe": 1,
+    "yuanshen": 0,
+    "hepingjingying": 0,
+    "lolm": 0,
+    "danzaipaidui": 0,
+    "xingqiongtiedao": 0,
     "jinchanchanzhizhan": 1,
 }
+
+# 轮转权重 — 每周换一批游戏重点发，避免永远只发两款
+GAME_ROTATION = [
+    {"wangzhe": 1, "yuanshen": 1},                     # 周一
+    {"hepingjingying": 1, "lolm": 1},                   # 周二
+    {"danzaipaidui": 1, "xingqiongtiedao": 1},          # 周三
+    {"wangzhe": 1, "jinchanchanzhizhan": 1},            # 周四
+    {"yuanshen": 1, "hepingjingying": 1},               # 周五
+    {"lolm": 1, "danzaipaidui": 1},                     # 周六
+    {"xingqiongtiedao": 1, "jinchanchanzhizhan": 1},    # 周日
+]
 
 
 # ── AI 味检测与后处理 ──────────────────────────────────
@@ -84,6 +95,8 @@ AI_PATTERNS = [
     r"(需要注意的是|值得一提的是|不可否认|毋庸置疑)",
     r"(提供了.*保障|奠定了.*基础|发挥了.*作用)",
     r"(评论区问|评论区见|评论区聊|评论区再问|留言区问|评论区留言)",
+    r"(好了就这样|冲就完了|绝绝子|属于是|nbcs)",
+    r"(玩了三年多|玩了三年的|作为一名.*老玩家)",
 ]
 
 REPLACE_MAP = {
@@ -130,10 +143,10 @@ def reduce_ai_flavor(text: str) -> str:
 
 
 COMMENT_ENDING_REPLACEMENTS = [
-    "去试试吧",
-    "就这样，冲就完了",
-    "好了就这样",
-    "去游戏里练练吧",
+    "去游戏里试试手感",
+    "具体手感还是得自己试",
+    "先到训练营练练",
+    "",
 ]
 
 COMMENT_REF_PATTERNS = [
@@ -255,7 +268,7 @@ def generate_article(
         response = client.messages.create(
             model=MODEL,
             max_tokens=4096,
-            system="你是一个资深游戏玩家，写攻略像和朋友聊天一样自然。不要用任何 AI 常见的套路句式。",
+            system="你是游戏内容写手，写作风格自然口语化。严禁使用以下表达：好了就这样、绝绝子、属于是、nbcs、作为一名老玩家、玩了三年多、首先其次最后、值得注意的是、综上所述。结尾不要套路化。",
             messages=[
                 {"role": "user", "content": prompt},
             ],
@@ -378,25 +391,23 @@ def git_push(message: str) -> bool:
 
 
 def select_by_weight(all_pending: list[dict], limit: int | None = None) -> list[dict]:
-    """按游戏权重从待生成关键词中选取"""
+    """按每日轮转权重从待生成关键词中选取（每天 2 篇）"""
     # 按游戏分组
     by_category: dict[str, list[dict]] = {}
     for kw in all_pending:
         by_category.setdefault(kw["category"], []).append(kw)
 
-    # 按权重取每款游戏的文章数
+    # 根据今天是周几选择权重
+    today_weekday = datetime.now().weekday()  # 0=Monday
+    weights = GAME_ROTATION[today_weekday % len(GAME_ROTATION)]
+
     selected = []
-    for category, weight in GAME_WEIGHTS.items():
+    for category, weight in weights.items():
         cat_pending = by_category.get(category, [])
         count = min(weight, len(cat_pending))
         selected.extend(cat_pending[:count])
 
-    # 有未配置权重的游戏，也各取 1 篇
-    for category, cat_pending in by_category.items():
-        if category not in GAME_WEIGHTS and cat_pending:
-            selected.append(cat_pending[0])
-
-    # 打乱顺序，避免同一游戏连续生成
+    # 打乱顺序
     random.shuffle(selected)
 
     if limit:

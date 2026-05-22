@@ -52,6 +52,9 @@ buildExpired = false
   # Google Analytics - 替换为你的 G-XXXXXXXXXX
   # googleAnalytics = "G-XXXXXXXXXX"
 
+  # 百度统计 - 替换为你的百度统计 ID
+  # baiduTongjiID = "your-baidu-tongji-id"
+
 
 [markup]
   [markup.goldmark]
@@ -122,6 +125,11 @@ buildExpired = false
     name = "关于"
     url = "/about/"
     weight = 90
+  [[menu.main]]
+    identifier = "sitemap-page"
+    name = "站点地图"
+    url = "/sitemap-page/"
+    weight = 95
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
