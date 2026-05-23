@@ -152,6 +152,21 @@ def restart_gateway():
     print("gateway 已重启", file=sys.stderr)
 
 
+def wake_up_connection():
+    """发送唤醒心跳，激活微信会话（解决长时间静默后消息丢失问题）"""
+    print("发送心跳唤醒微信会话...", file=sys.stderr)
+    heartbeat = f"[心跳] {int(time.time())}"
+    result = subprocess.run(
+        [OPENCLAW, "message", "send",
+         "--channel", CHANNEL,
+         "--target", WECHAT_TARGET,
+         "-m", heartbeat],
+        capture_output=True, timeout=30
+    )
+    time.sleep(5)
+    print("心跳已发送", file=sys.stderr)
+
+
 def openclaw_send_text(text: str) -> bool:
     """通过 OpenClaw CLI 发送文字"""
     result = subprocess.run(
@@ -207,6 +222,9 @@ def main():
 
     # 重启 gateway 恢复 contextToken（一次就够）
     restart_gateway()
+
+    # 发送心跳唤醒微信会话
+    wake_up_connection()
 
     results = []
     for i in range(args.count):
