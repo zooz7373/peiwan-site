@@ -269,9 +269,13 @@ def main():
             "image_path": image_path,
         })
 
-        # 条间间隔，避免太快
+        # 文字和图片之间间隔
+        if text_ok and image_ok:
+            time.sleep(3)
+
+        # 条间间隔，避免微信限流
         if i < args.count - 1:
-            time.sleep(5)
+            time.sleep(30)
 
     # 输出 JSON 结果
     result_json = json.dumps({
