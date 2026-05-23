@@ -46,7 +46,15 @@ peiwan.co（以下简称"本站"）重视您的隐私保护。本隐私政策说
 
 ## 广告
 
-本站可能展示第三方广告。广告商可能会使用 Cookie 或类似技术来投放相关广告。
+本站使用 Google AdSense 展示广告。Google AdSense 使用 Cookie 来根据用户之前对本网站或其他网站的访问情况投放广告。
+
+- Google 使用 DART Cookie 投放基于用户兴趣的广告
+- 用户可以访问 [Google 广告设置](https://www.google.com/settings/ads) 选择退出个性化广告
+- 用户也可以访问 [www.aboutads.info](https://www.aboutads.info) 选择退出第三方 Cookie 的个性化广告
+
+本站还使用百度联盟展示广告，百度联盟同样可能使用 Cookie 来投放相关广告。
+
+如您不希望收到个性化广告，可通过上述链接进行设置。
 
 ## 信息安全
 
