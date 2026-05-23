@@ -63,7 +63,7 @@ OPENCLAW = r"C:\Users\Administrator\AppData\Roaming\npm\openclaw.cmd"
 
 def call_mimo(prompt: str) -> dict:
     """调用 MiMo API 生成内容"""
-    full_prompt = prompt + "\n\n请严格按照以下格式输出，不要多余内容：\n文案：[你的文案]\n关键词：[一个搜图用的中文关键词]\n标签：[3个标签用空格分隔]"
+    full_prompt = prompt + "\n\n请严格按照以下格式输出，不要多余内容：\n文案：[你的文案]\n关键词：[一个能代表文案内容的中文关键词]\n英文搜图词：[对应的英文搜索词，用于在Pexels搜图，2-4个英文单词，要能搜出与文案匹配的图片，例如：sweet tofu pudding, minimalism home, spicy snack]\n标签：[3个标签用空格分隔]"
 
     body = json.dumps({
         "model": MIMO_MODEL,
@@ -87,12 +87,14 @@ def call_mimo(prompt: str) -> dict:
         return {"text": "", "keyword": ""}
 
     lines = content.strip().split("\n")
-    text_line = keyword_line = tags_line = ""
+    text_line = keyword_line = search_query = tags_line = ""
     for line in lines:
         if line.startswith("文案："):
             text_line = line[3:].strip()
         elif line.startswith("关键词："):
             keyword_line = line[4:].strip()
+        elif line.startswith("英文搜图词："):
+            search_query = line[6:].strip()
         elif line.startswith("标签："):
             tags_line = line[3:].strip()
 
@@ -104,19 +106,23 @@ def call_mimo(prompt: str) -> dict:
         if not keyword_line:
             keyword_line = "lifestyle daily"
 
+    if not search_query:
+        search_query = keyword_line
+
     return {
         "text": text_line or content,
         "keyword": keyword_line,
+        "search_query": search_query,
         "tags": tags_line,
         "raw": content,
     }
 
 
-def fetch_and_download_image(keyword: str) -> str:
+def fetch_and_download_image(search_query: str) -> str:
     """调用 image_fetch.py 下载图片，返回本地路径"""
     try:
         result = subprocess.run(
-            ["python", IMAGE_SCRIPT, keyword, "--download"],
+            ["python", IMAGE_SCRIPT, search_query, "--download"],
             capture_output=True, timeout=30
         )
         path = result.stdout.decode("utf-8", errors="replace").strip()
@@ -220,7 +226,7 @@ def main():
 
         # Step 2: 下载图片
         print("正在获取配图...", file=sys.stderr)
-        image_path = fetch_and_download_image(content["keyword"])
+        image_path = fetch_and_download_image(content.get("search_query", content["keyword"]))
         print(f"图片: {image_path}", file=sys.stderr)
 
         # Step 3: 组装消息
