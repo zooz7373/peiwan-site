@@ -30,7 +30,7 @@ if (-not $env:MIMO_MODEL) { $env:MIMO_MODEL = "mimo-v2.5-pro" }
 
 # 按游戏权重生成文章（默认 8 篇，由 generate.py 内部 GAME_WEIGHTS 控制）
 Write-Log "开始按权重生成文章..."
-python "$PSScriptRoot\generate.py" --push
+python "$PSScriptRoot\generate.py"
 $exitCode = $LASTEXITCODE
 
 if ($exitCode -eq 0) {
@@ -38,6 +38,10 @@ if ($exitCode -eq 0) {
 } else {
     Write-Log "[WARN] 文章生成过程中有错误 (exit code: $exitCode)"
 }
+
+# 清空旧文件再构建，防止缓存残留
+Write-Log "Clearing C:\www\peiwan..."
+Remove-Item -Path C:\www\peiwan\* -Recurse -Force -ErrorAction SilentlyContinue
 
 # 构建 Hugo 并部署到 Nginx
 Write-Log "Building Hugo site..."
@@ -49,16 +53,13 @@ if ($?) {
     Write-Log "[WARN] Hugo build failed"
 }
 
-# 推送（如果 generate.py 没有推送的话）
-Write-Log "Pushing to GitHub..."
-git -C $repoDir add .
-$status = git -C $repoDir status --porcelain
-if ($status) {
-    git -C $repoDir commit -m "feat: auto content update $(Get-Date -Format 'yyyy-MM-dd')"
-    git -C $repoDir push
-    Write-Log "Pushed to GitHub"
-} else {
-    Write-Log "No changes to push"
-}
+# 仅本地部署，不同步 GitHub
+
+# 重启 Nginx
+Write-Log "Restarting Nginx..."
+Get-Process nginx -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+Start-Sleep -Seconds 2
+Start-Process "C:\nginx-1.27.5\nginx.exe" -WorkingDirectory "C:\nginx-1.27.5"
+Write-Log "Nginx restarted"
 
 Write-Log "========== Auto generation complete =========="
