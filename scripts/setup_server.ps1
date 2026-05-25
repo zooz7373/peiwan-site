@@ -1,4 +1,4 @@
-# peiwan.co server setup script
+﻿# peiwan.co server setup script
 # Run once on Windows server as administrator
 # Usage: .\scripts\setup_server.ps1 -ApiKey "your-key" -RepoUrl "https://github.com/..."
 

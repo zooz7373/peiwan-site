@@ -136,35 +136,40 @@ def fetch_and_download_image(search_query: str) -> str:
 def restart_gateway():
     """重启 gateway 以重载 contextToken（解决主动推送静默失败问题）"""
     print("重启 gateway...", file=sys.stderr)
+    try:
+        # 停止 gateway（等它退出）
+        subprocess.run([OPENCLAW, "gateway", "stop"], capture_output=True, timeout=30)
+        time.sleep(3)
 
-    # 停止 gateway（等它退出）
-    subprocess.run([OPENCLAW, "gateway", "stop"], capture_output=True, timeout=30)
-    time.sleep(3)
-
-    # 启动 gateway（后台进程，不等待）
-    DEVNULL = open(os.devnull, "w")
-    subprocess.Popen(
-        [OPENCLAW, "gateway", "start"],
-        stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
-        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS,
-    )
-    time.sleep(20)
-    print("gateway 已重启", file=sys.stderr)
+        # 启动 gateway（后台进程，不等待）
+        DEVNULL = open(os.devnull, "w")
+        subprocess.Popen(
+            [OPENCLAW, "gateway", "start"],
+            stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS,
+        )
+        time.sleep(20)
+        print("gateway 已重启", file=sys.stderr)
+    except Exception as e:
+        print(f"gateway 重启失败（静默跳过）: {e}", file=sys.stderr)
 
 
 def wake_up_connection():
     """发送唤醒心跳，激活微信会话（解决长时间静默后消息丢失问题）"""
     print("发送心跳唤醒微信会话...", file=sys.stderr)
     heartbeat = f"[心跳] {int(time.time())}"
-    result = subprocess.run(
-        [OPENCLAW, "message", "send",
-         "--channel", CHANNEL,
-         "--target", WECHAT_TARGET,
-         "-m", heartbeat],
-        capture_output=True, timeout=30
-    )
-    time.sleep(5)
-    print("心跳已发送", file=sys.stderr)
+    try:
+        subprocess.run(
+            [OPENCLAW, "message", "send",
+             "--channel", CHANNEL,
+             "--target", WECHAT_TARGET,
+             "-m", heartbeat],
+            capture_output=True, timeout=30
+        )
+        time.sleep(5)
+        print("心跳已发送", file=sys.stderr)
+    except (subprocess.TimeoutExpired, Exception) as e:
+        print(f"心跳发送失败（静默跳过）: {e}", file=sys.stderr)
 
 
 def openclaw_send_text(text: str) -> bool:

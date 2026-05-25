@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 $tasks = @(
     @{Name="XlvSendMorning"; Time="08:00"; Style="morning"},

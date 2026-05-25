@@ -1,4 +1,4 @@
-# Fix xlv scheduled tasks - use PowerShell to call python with full path
+﻿# Fix xlv scheduled tasks - use PowerShell to call python with full path
 $ErrorActionPreference = "Stop"
 
 $pythonPath = "C:\Program Files\Python313\python.exe"
