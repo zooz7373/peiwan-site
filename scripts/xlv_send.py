@@ -1,4 +1,4 @@
-"""
+﻿"""
 小绿书内容生成 + 配图 + 发送一体化脚本
 用法: python xlv_send.py [--style morning] [--topic 食物对比]
 
@@ -63,7 +63,7 @@ OPENCLAW = r"C:\Users\Administrator\AppData\Roaming\npm\openclaw.cmd"
 
 def call_mimo(prompt: str) -> dict:
     """调用 MiMo API 生成内容"""
-    full_prompt = prompt + "\n\n请严格按照以下格式输出，不要多余内容：\n文案：[你的文案]\n关键词：[一个搜图用的中文关键词]\n标签：[3个标签用空格分隔]"
+    full_prompt = prompt + "\n\n请严格按照以下格式输出，不要多余内容：\n文案：[你的文案]\n关键词：[一个能代表文案内容的中文关键词]\n英文搜图词：[对应的英文搜索词，用于在Pexels搜图，2-4个英文单词，要能搜出与文案匹配的图片，例如：sweet tofu pudding, minimalism home, spicy snack]\n标签：[3个标签用空格分隔]"
 
     body = json.dumps({
         "model": MIMO_MODEL,
@@ -87,12 +87,14 @@ def call_mimo(prompt: str) -> dict:
         return {"text": "", "keyword": ""}
 
     lines = content.strip().split("\n")
-    text_line = keyword_line = tags_line = ""
+    text_line = keyword_line = search_query = tags_line = ""
     for line in lines:
         if line.startswith("文案："):
             text_line = line[3:].strip()
         elif line.startswith("关键词："):
             keyword_line = line[4:].strip()
+        elif line.startswith("英文搜图词："):
+            search_query = line[6:].strip()
         elif line.startswith("标签："):
             tags_line = line[3:].strip()
 
@@ -104,19 +106,23 @@ def call_mimo(prompt: str) -> dict:
         if not keyword_line:
             keyword_line = "lifestyle daily"
 
+    if not search_query:
+        search_query = keyword_line
+
     return {
         "text": text_line or content,
         "keyword": keyword_line,
+        "search_query": search_query,
         "tags": tags_line,
         "raw": content,
     }
 
 
-def fetch_and_download_image(keyword: str) -> str:
+def fetch_and_download_image(search_query: str) -> str:
     """调用 image_fetch.py 下载图片，返回本地路径"""
     try:
         result = subprocess.run(
-            ["python", IMAGE_SCRIPT, keyword, "--download"],
+            ["python", IMAGE_SCRIPT, search_query, "--download"],
             capture_output=True, timeout=30
         )
         path = result.stdout.decode("utf-8", errors="replace").strip()
@@ -130,20 +136,40 @@ def fetch_and_download_image(keyword: str) -> str:
 def restart_gateway():
     """重启 gateway 以重载 contextToken（解决主动推送静默失败问题）"""
     print("重启 gateway...", file=sys.stderr)
+    try:
+        # 停止 gateway（等它退出）
+        subprocess.run([OPENCLAW, "gateway", "stop"], capture_output=True, timeout=30)
+        time.sleep(3)
 
-    # 停止 gateway（等它退出）
-    subprocess.run([OPENCLAW, "gateway", "stop"], capture_output=True, timeout=30)
-    time.sleep(3)
+        # 启动 gateway（后台进程，不等待）
+        DEVNULL = open(os.devnull, "w")
+        subprocess.Popen(
+            [OPENCLAW, "gateway", "start"],
+            stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS,
+        )
+        time.sleep(20)
+        print("gateway 已重启", file=sys.stderr)
+    except Exception as e:
+        print(f"gateway 重启失败（静默跳过）: {e}", file=sys.stderr)
 
-    # 启动 gateway（后台进程，不等待）
-    DEVNULL = open(os.devnull, "w")
-    subprocess.Popen(
-        [OPENCLAW, "gateway", "start"],
-        stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
-        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS,
-    )
-    time.sleep(20)
-    print("gateway 已重启", file=sys.stderr)
+
+def wake_up_connection():
+    """发送唤醒心跳，激活微信会话（解决长时间静默后消息丢失问题）"""
+    print("发送心跳唤醒微信会话...", file=sys.stderr)
+    heartbeat = f"[心跳] {int(time.time())}"
+    try:
+        subprocess.run(
+            [OPENCLAW, "message", "send",
+             "--channel", CHANNEL,
+             "--target", WECHAT_TARGET,
+             "-m", heartbeat],
+            capture_output=True, timeout=30
+        )
+        time.sleep(5)
+        print("心跳已发送", file=sys.stderr)
+    except (subprocess.TimeoutExpired, Exception) as e:
+        print(f"心跳发送失败（静默跳过）: {e}", file=sys.stderr)
 
 
 def openclaw_send_text(text: str) -> bool:
@@ -202,6 +228,9 @@ def main():
     # 重启 gateway 恢复 contextToken（一次就够）
     restart_gateway()
 
+    # 发送心跳唤醒微信会话
+    wake_up_connection()
+
     results = []
     for i in range(args.count):
         print(f"\n=== 第 {i+1}/{args.count} 条 ===", file=sys.stderr)
@@ -220,7 +249,7 @@ def main():
 
         # Step 2: 下载图片
         print("正在获取配图...", file=sys.stderr)
-        image_path = fetch_and_download_image(content["keyword"])
+        image_path = fetch_and_download_image(content.get("search_query", content["keyword"]))
         print(f"图片: {image_path}", file=sys.stderr)
 
         # Step 3: 组装消息
@@ -263,9 +292,13 @@ def main():
             "image_path": image_path,
         })
 
-        # 条间间隔，避免太快
+        # 文字和图片之间间隔
+        if text_ok and image_ok:
+            time.sleep(3)
+
+        # 条间间隔，避免微信限流
         if i < args.count - 1:
-            time.sleep(5)
+            time.sleep(30)
 
     # 输出 JSON 结果
     result_json = json.dumps({
@@ -279,3 +312,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -1,4 +1,4 @@
-# Install Windows scheduled task
+﻿# Install Windows scheduled task
 # Runs daily at 3:00 AM to auto-generate content
 # Usage: Run as administrator: .\scripts\install_task.ps1
 
