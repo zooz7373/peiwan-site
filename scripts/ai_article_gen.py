@@ -19,9 +19,37 @@ TOPICS_FILE = os.path.join(SCRIPT_DIR, "ai_topics.txt")
 TEMPLATE_FILE = os.path.join(SCRIPT_DIR, "templates", "ai_article_prompt.txt")
 HISTORY_FILE = os.path.join(SCRIPT_DIR, "ai_articles_generated.json")
 
-MIMO_API_KEY = os.environ.get("MIMO_API_KEY", "")
-MIMO_BASE_URL = os.environ.get("MIMO_API_BASE", "https://token-plan-cn.xiaomimimo.com/v1")
-MIMO_MODEL = os.environ.get("MIMO_MODEL", "mimo-v2.5")
+def _get_env(name: str) -> str:
+    """优先进程环境变量，其次 User 级，最后 Machine 级"""
+    val = os.environ.get(name, "")
+    if val:
+        return val
+    try:
+        r = subprocess.run(
+            ["powershell", "-Command", f"[Environment]::GetEnvironmentVariable('{name}','User')"],
+            capture_output=True, text=True, timeout=10,
+        )
+        val = r.stdout.strip()
+        if val:
+            return val
+    except Exception:
+        pass
+    try:
+        r = subprocess.run(
+            ["powershell", "-Command", f"[Environment]::GetEnvironmentVariable('{name}','Machine')"],
+            capture_output=True, text=True, timeout=10,
+        )
+        val = r.stdout.strip()
+        if val:
+            return val
+    except Exception:
+        pass
+    return ""
+
+
+MIMO_API_KEY = _get_env("MIMO_API_KEY")
+MIMO_BASE_URL = "https://token-plan-cn.xiaomimimo.com/v1"
+MIMO_MODEL = _get_env("MIMO_MODEL") or "mimo-v2.5"
 
 WECHAT_TARGET = "o9cq805lfrS-OgQ59AIP9tamh3Jw@im.wechat"
 CHANNEL = "openclaw-weixin"
@@ -213,34 +241,8 @@ def main():
     args = parser.parse_args()
 
     if not MIMO_API_KEY:
-        # fallback to env var names used by peiwan
-        MIMO_API_KEY_FALLBACK = os.environ.get("MIMO_API_KEY", "")
-        if not MIMO_API_KEY_FALLBACK:
-            # try reading from system env
-            try:
-                result = subprocess.run(
-                    ["powershell", "-Command",
-                     "[Environment]::GetEnvironmentVariable('MIMO_API_KEY','User');"
-                     "[Environment]::GetEnvironmentVariable('MIMO_API_KEY','Machine')"],
-                    capture_output=True, timeout=10,
-                )
-                lines = result.stdout.decode("utf-8", errors="replace").strip().split("\n")
-                for line in lines:
-                    line = line.strip()
-                    if line and line.startswith("tp-"):
-                        globals()["MIMO_API_KEY"] = line
-                        break
-            except Exception:
-                pass
-
-    if not globals().get("MIMO_API_KEY") and not MIMO_API_KEY:
-        print("[ERROR] MIMO_API_KEY 未设置", file=sys.stderr)
+        print("[ERROR] MIMO_API_KEY 未设置（User 和 Machine 级都未找到）", file=sys.stderr)
         sys.exit(1)
-
-    # Use whichever key we found
-    api_key = MIMO_API_KEY or globals().get("MIMO_API_KEY", "")
-    if api_key:
-        globals()["MIMO_API_KEY"] = api_key
 
     topics = load_topics()
     history = load_history()
