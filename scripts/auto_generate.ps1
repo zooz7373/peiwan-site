@@ -16,16 +16,22 @@ function Write-Log {
 
 Write-Log "========== 开始自动生成 =========="
 
-# 加载环境变量
-$apiKey = [System.Environment]::GetEnvironmentVariable("MIMO_API_KEY", "User")
+# 加载环境变量（优先 User 级，fallback 到 Machine 级）
+function Get-EnvVar([string]$Name) {
+    $val = [System.Environment]::GetEnvironmentVariable($Name, "User")
+    if (-not $val) { $val = [System.Environment]::GetEnvironmentVariable($Name, "Machine") }
+    return $val
+}
+
+$apiKey = Get-EnvVar "MIMO_API_KEY"
 if (-not $apiKey) {
-    Write-Log "[ERROR] MIMO_API_KEY 未设置"
+    Write-Log "[ERROR] MIMO_API_KEY 未设置（User 和 Machine 级都未找到）"
     exit 1
 }
 $env:MIMO_API_KEY = $apiKey
-$env:MIMO_API_BASE = [System.Environment]::GetEnvironmentVariable("MIMO_API_BASE", "User")
+$env:MIMO_API_BASE = Get-EnvVar "MIMO_API_BASE"
 if (-not $env:MIMO_API_BASE) { $env:MIMO_API_BASE = "https://token-plan-cn.xiaomimimo.com/anthropic" }
-$env:MIMO_MODEL = [System.Environment]::GetEnvironmentVariable("MIMO_MODEL", "User")
+$env:MIMO_MODEL = Get-EnvVar "MIMO_MODEL"
 if (-not $env:MIMO_MODEL) { $env:MIMO_MODEL = "mimo-v2.5-pro" }
 
 # 按游戏权重生成文章（默认 8 篇，由 generate.py 内部 GAME_WEIGHTS 控制）
