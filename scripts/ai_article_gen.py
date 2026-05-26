@@ -134,35 +134,10 @@ def call_mimo(prompt: str) -> dict:
 
 
 def openclaw_send_text(text: str) -> bool:
-    """通过 OpenClaw CLI 发送文本"""
-    # 分段发送，避免消息太长
-    if len(text) > 2000:
-        parts = []
-        current = ""
-        for line in text.split("\n"):
-            if len(current) + len(line) > 1800:
-                parts.append(current)
-                current = line + "\n"
-            else:
-                current += line + "\n"
-        if current.strip():
-            parts.append(current)
+    """通过 OpenClaw CLI 发送文本，长消息自动分段"""
+    max_len = 600  # 每段最大字数，避免微信长消息丢失
 
-        success = True
-        for i, part in enumerate(parts):
-            if i > 0:
-                time.sleep(3)
-            result = subprocess.run(
-                [OPENCLAW, "message", "send",
-                 "--channel", CHANNEL,
-                 "--target", WECHAT_TARGET,
-                 "-m", part.strip()],
-                capture_output=True, timeout=90,
-            )
-            if result.returncode != 0:
-                success = False
-        return success
-    else:
+    if len(text) <= max_len:
         result = subprocess.run(
             [OPENCLAW, "message", "send",
              "--channel", CHANNEL,
@@ -170,7 +145,39 @@ def openclaw_send_text(text: str) -> bool:
              "-m", text],
             capture_output=True, timeout=90,
         )
+        out = result.stdout.decode("utf-8", errors="replace")
+        print(f"  -> 发送: {text[:30]}... rc={result.returncode}", file=sys.stderr)
         return result.returncode == 0
+
+    # 按段落拆分
+    parts = []
+    current = ""
+    for line in text.split("\n"):
+        if len(current) + len(line) > max_len and current.strip():
+            parts.append(current.strip())
+            current = line + "\n"
+        else:
+            current += line + "\n"
+    if current.strip():
+        parts.append(current.strip())
+
+    success = True
+    for i, part in enumerate(parts):
+        if i > 0:
+            time.sleep(4)
+        print(f"  -> 发送第{i+1}/{len(parts)}段 ({len(part)}字): {part[:30]}...", file=sys.stderr)
+        result = subprocess.run(
+            [OPENCLAW, "message", "send",
+             "--channel", CHANNEL,
+             "--target", WECHAT_TARGET,
+             "-m", part],
+            capture_output=True, timeout=90,
+        )
+        if result.returncode != 0:
+            err = result.stderr.decode("utf-8", errors="replace")
+            print(f"  -> 发送失败: {err[:100]}", file=sys.stderr)
+            success = False
+    return success
 
 
 def parse_article(raw_content: str) -> dict:
@@ -292,8 +299,8 @@ def main():
             print("正在发送到微信...", file=sys.stderr)
             # 发送标题提示
             openclaw_send_text(f"正在生成第{i + 1}篇文章：{article['title']}...")
-            time.sleep(2)
-            # 发送文章内容
+            time.sleep(5)
+            # 发送文章内容（自动分段）
             sent = openclaw_send_text(message)
             if sent:
                 print("发送成功", file=sys.stderr)
